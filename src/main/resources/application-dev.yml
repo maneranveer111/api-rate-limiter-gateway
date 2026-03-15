@@ -1,0 +1,12 @@
+# Development Profile
+spring:
+  application:
+    name: api-gateway-dev
+
+logging:
+  level:
+    root: DEBUG
+    com.gateway.api_gateway: DEBUG
+
+server:
+  port: 8080

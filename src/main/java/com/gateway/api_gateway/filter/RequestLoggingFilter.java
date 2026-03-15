@@ -4,6 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
@@ -12,6 +14,10 @@ import java.time.LocalDateTime;
 @Component
 public class RequestLoggingFilter extends OncePerRequestFilter {
 
+    // Professional logger instead of System.out.println
+    private static final Logger log =
+            LoggerFactory.getLogger(RequestLoggingFilter.class);
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -19,29 +25,29 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Record start time
         long startTime = System.currentTimeMillis();
 
         // Log incoming request
-        System.out.println("========================================");
-        System.out.println("INCOMING REQUEST");
-        System.out.println("Time      : " + LocalDateTime.now());
-        System.out.println("Method    : " + request.getMethod());
-        System.out.println("URL       : " + request.getRequestURI());
-        System.out.println("IP Address: " + request.getRemoteAddr());
-        System.out.println("========================================");
+        log.info("========================================");
+        log.info("INCOMING REQUEST");
+        log.info("Time       : {}", LocalDateTime.now());
+        log.info("Method     : {}", request.getMethod());
+        log.info("URL        : {}", request.getRequestURI());
+        log.info("IP Address : {}", request.getRemoteAddr());
+        log.info("User Agent : {}", request.getHeader("User-Agent"));
+        log.info("========================================");
 
-        // Pass request to next filter or controller
+        // Pass to next filter/controller
         filterChain.doFilter(request, response);
 
-        // Calculate how long request took
+        // Calculate duration
         long duration = System.currentTimeMillis() - startTime;
 
         // Log outgoing response
-        System.out.println("========================================");
-        System.out.println("OUTGOING RESPONSE");
-        System.out.println("Status    : " + response.getStatus());
-        System.out.println("Duration  : " + duration + "ms");
-        System.out.println("========================================");
+        log.info("========================================");
+        log.info("OUTGOING RESPONSE");
+        log.info("Status     : {}", response.getStatus());
+        log.info("Duration   : {}ms", duration);
+        log.info("========================================");
     }
 }
